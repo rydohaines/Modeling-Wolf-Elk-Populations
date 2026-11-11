@@ -28,6 +28,8 @@ behavior of the ecosystem?
 pressure and other model parameters?
 5. Under what conditions can the system return to a stable equilibrium following
 significant changes in either population?
+
+
 We will evaluate our models using several measures. First, we will examine population
 trajectories over time to identify trends, oscillations, equilibrium points, and potential
 extinction scenarios. We will analyze the stability of equilibrium solutions and investigate
