@@ -8,8 +8,9 @@ or supply your own ``rhs(t, y, parameters)`` to :class:`ODESystem`.
 Plots never call ``plt.show()``. Every plotting method returns ``(fig, ax)``
 so figures can be customized or saved by a script or notebook.
 
-Model assumptions: farmers and hunters are exogenous constant pressures, not
-state variables. All defaults are illustrative, not empirically calibrated.
+Model assumptions: farmers/hunters are not populations we track over time.
+Instead, policy knobs KF, hE, hW, and pF are fixed inputs you set. Default
+numbers are made-up examples for demos, not fitted to real Yellowstone data.
 """
 
 from __future__ import annotations
@@ -386,55 +387,49 @@ class ODESystem:
 
 
 def wolf_elk_rhs(t: float, y: NDArray[np.float64], p: Mapping[str, float]) -> NDArray[np.float64]:
-    """Wolf–elk dynamics with farming and hunting pressure.
+    """Beddington–DeAngelis wolf–elk model with human policy controls.
 
-    dE/dt = r_E*E*(1-E/(K-alpha_FE*F)) - a*E*W - c_HE*H*E
-    dW/dt = eta*a*E*W - d_W*W - c_FW*F*W
+    dE/dt = r E (1 - E / KF) - (a E W) / (1 + a h E + c W) - hE E
+    dW/dt = (b a E W) / (1 + a h E + c W) - m W - hW W - pF W
 
-    E = elk; W = wolves; F = farmer population/effort; H = hunter effort.
-    F and H are fixed external inputs (unless replaced by a different RHS).
-    This is a simplified mechanistic example, not a validated field model.
+    KF is agricultural/social carrying capacity (farming shrinks habitat).
+    hE, hW, pF are elk hunting, wolf hunting, and farmer lethal removal.
     """
     E, W = y
-    effective_capacity = p["K"] - p["alpha_FE"] * p["F"]
-    if effective_capacity <= 0:
-        raise ValueError("Farmer pressure must leave a positive elk carrying capacity")
-    elk_growth = p["r_E"] * E * (1 - E / effective_capacity)
-    predation = p["a"] * E * W
-    hunter_elk_loss = p["c_HE"] * p["H"] * E
-    farmer_wolf_loss = p["c_FW"] * p["F"] * W
-    dE = elk_growth - predation - hunter_elk_loss
-    dW = p["eta"] * predation - p["d_W"] * W - farmer_wolf_loss
+    KF = max(float(p["KF"]), 1e-6)
+    denom = 1.0 + p["a"] * p["h"] * E + p["c"] * W
+    predation = (p["a"] * E * W) / denom
+    dE = p["r"] * E * (1.0 - E / KF) - predation - p["hE"] * E
+    dW = p["b"] * predation - p["m"] * W - p["hW"] * W - p["pF"] * W
     return np.array([dE, dW], dtype=float)
 
 
 WOLF_ELK_DEFAULTS: dict[str, float] = {
-    "r_E": 0.40,    # intrinsic elk per-capita growth, 1/time
-    "K": 1200.0,    # elk carrying capacity without farmer pressure, elk
-    "alpha_FE": 10.0, # capacity reduction per farmer, elk/farmer
-    "a": 0.001,     # predation encounters, 1/(wolf*time)
-    "eta": 0.25,    # conversion of elk consumed into wolf recruitment (scaled)
-    "d_W": 0.08,    # natural wolf per-capita death, 1/time
-    "F": 6.0,       # farmer population / pressure index, exogenous
-    "H": 4.0,       # hunter population / pressure index, exogenous
-    "c_HE": 0.003,  # elk loss per hunter, 1/(hunter*time)
-    "c_FW": 0.004,  # wolf loss per farmer, 1/(farmer*time)
+    "r": 0.55,      # elk intrinsic growth
+    "a": 0.035,     # attack rate
+    "h": 0.08,      # handling time
+    "c": 0.04,      # predator interference
+    "b": 0.28,      # conversion efficiency
+    "m": 0.18,      # wolf natural mortality
+    "K0": 120.0,    # max environmental capacity (reference)
+    "KF": 100.0,    # effective elk carrying capacity under land use
+    "hE": 0.0,      # per-capita elk hunting rate
+    "hW": 0.0,      # per-capita wolf hunting rate
+    "pF": 0.0,      # farmer lethal-removal rate on wolves
 }
 
 
 def make_wolf_elk_model(**parameter_overrides: float) -> ODESystem:
-    """Construct the example model; override parameters using keyword args.
+    """Construct the BD model; override parameters using keyword args.
 
-    Example: ``make_wolf_elk_model(F=10, H=0, K=1500)``.
+    Example: ``make_wolf_elk_model(KF=55, hE=0.02, pF=0.05)``.
     """
     invalid = set(parameter_overrides) - set(WOLF_ELK_DEFAULTS)
     if invalid:
         raise KeyError(f"Unknown wolf–elk parameter(s): {sorted(invalid)}")
     parameters = {**WOLF_ELK_DEFAULTS, **parameter_overrides}
-    if parameters["K"] <= 0:
-        raise ValueError("K must be strictly positive")
-    if parameters["K"] - parameters["alpha_FE"] * parameters["F"] <= 0:
-        raise ValueError("Farmer pressure must leave a positive elk carrying capacity")
+    if parameters["KF"] <= 0 or parameters["K0"] <= 0:
+        raise ValueError("KF and K0 must be strictly positive")
     if any(v < 0 for v in parameters.values()):
         raise ValueError("Wolf–elk parameters must be nonnegative")
     return ODESystem(
