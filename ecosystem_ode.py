@@ -385,6 +385,43 @@ class ODESystem:
         return sorted(equilibria, key=lambda z: (z[0], z[1]))
 
 
+def periodic_pulse(
+    t: float,
+    period: float,
+    width: float,
+    height: float,
+    base: float = 0.0,
+) -> float:
+    """Rectangular periodic pulse: base most of the time, base+height for width each period.
+
+    Within each interval ``[n*period, (n+1)*period)``, the pulse is active on
+    ``[n*period, n*period + width)``. Requires ``period > 0`` and ``0 <= width <= period``.
+    """
+    if period <= 0:
+        raise ValueError("period must be strictly positive")
+    if width < 0 or width > period:
+        raise ValueError("width must satisfy 0 <= width <= period")
+    phase = float(t) % period
+    if phase < width:
+        return base + height
+    return base
+
+
+def farmer_pressure(t: float, p: Mapping[str, float]) -> float:
+    """Return exogenous farmer pressure F, possibly time-varying via pulse params.
+
+    If ``F_base``, ``F_pulse``, ``T``, and ``pulse_width`` are all present, use
+    ``periodic_pulse``. Otherwise use constant ``F``.
+    """
+    pulse_keys = ("F_base", "F_pulse", "T", "pulse_width")
+    if all(key in p for key in pulse_keys):
+        return periodic_pulse(
+            t, period=p["T"], width=p["pulse_width"],
+            height=p["F_pulse"], base=p["F_base"],
+        )
+    return float(p["F"])
+
+
 def wolf_elk_rhs(t: float, y: NDArray[np.float64], p: Mapping[str, float]) -> NDArray[np.float64]:
     """Wolf–elk dynamics with farming and hunting pressure.
 
@@ -392,17 +429,19 @@ def wolf_elk_rhs(t: float, y: NDArray[np.float64], p: Mapping[str, float]) -> ND
     dW/dt = eta*a*E*W - d_W*W - c_FW*F*W
 
     E = elk; W = wolves; F = farmer population/effort; H = hunter effort.
-    F and H are fixed external inputs (unless replaced by a different RHS).
+    H is a fixed external input. F may be constant or a continuous periodic
+    pulse when pulse parameters are supplied (see ``farmer_pressure``).
     This is a simplified mechanistic example, not a validated field model.
     """
     E, W = y
-    effective_capacity = p["K"] - p["alpha_FE"] * p["F"]
+    F = farmer_pressure(t, p)
+    effective_capacity = p["K"] - p["alpha_FE"] * F
     if effective_capacity <= 0:
         raise ValueError("Farmer pressure must leave a positive elk carrying capacity")
     elk_growth = p["r_E"] * E * (1 - E / effective_capacity)
     predation = p["a"] * E * W
     hunter_elk_loss = p["c_HE"] * p["H"] * E
-    farmer_wolf_loss = p["c_FW"] * p["F"] * W
+    farmer_wolf_loss = p["c_FW"] * F * W
     dE = elk_growth - predation - hunter_elk_loss
     dW = p["eta"] * predation - p["d_W"] * W - farmer_wolf_loss
     return np.array([dE, dW], dtype=float)
@@ -421,6 +460,27 @@ WOLF_ELK_DEFAULTS: dict[str, float] = {
     "c_FW": 0.004,  # wolf loss per farmer, 1/(farmer*time)
 }
 
+# Continuous periodic farmer pulses. Defaults are illustrative and chosen so
+# repeated spikes drive wolves toward extinction over several periods.
+PULSED_FARMER_DEFAULTS: dict[str, float] = {
+    **WOLF_ELK_DEFAULTS,
+    "F_base": 2.0,       # baseline farmer pressure between pulses
+    "F_pulse": 90.0,     # added farmer pressure during each pulse window
+    "T": 15.0,           # time between pulse starts
+    "pulse_width": 4.0,  # duration of each high-pressure window
+    "c_FW": 0.02,        # stronger wolf loss per farmer so pulses bite hard
+    "F": 2.0,            # kept in sync with F_base for capacity checks / API
+}
+
+
+def _validate_wolf_elk_parameters(parameters: Mapping[str, float], *, max_F: float) -> None:
+    if parameters["K"] <= 0:
+        raise ValueError("K must be strictly positive")
+    if parameters["K"] - parameters["alpha_FE"] * max_F <= 0:
+        raise ValueError("Farmer pressure must leave a positive elk carrying capacity")
+    if any(v < 0 for v in parameters.values()):
+        raise ValueError("Wolf–elk parameters must be nonnegative")
+
 
 def make_wolf_elk_model(**parameter_overrides: float) -> ODESystem:
     """Construct the example model; override parameters using keyword args.
@@ -431,16 +491,52 @@ def make_wolf_elk_model(**parameter_overrides: float) -> ODESystem:
     if invalid:
         raise KeyError(f"Unknown wolf–elk parameter(s): {sorted(invalid)}")
     parameters = {**WOLF_ELK_DEFAULTS, **parameter_overrides}
-    if parameters["K"] <= 0:
-        raise ValueError("K must be strictly positive")
-    if parameters["K"] - parameters["alpha_FE"] * parameters["F"] <= 0:
-        raise ValueError("Farmer pressure must leave a positive elk carrying capacity")
-    if any(v < 0 for v in parameters.values()):
-        raise ValueError("Wolf–elk parameters must be nonnegative")
+    _validate_wolf_elk_parameters(parameters, max_F=parameters["F"])
     return ODESystem(
         rhs=wolf_elk_rhs, state_names=("Elk", "Wolves"),
         parameters=parameters, title="Wolf–elk ecosystem",
     )
 
 
-__all__ = ["ODESystem", "WOLF_ELK_DEFAULTS", "make_wolf_elk_model", "wolf_elk_rhs"]
+def make_pulsed_farmer_model(**parameter_overrides: float) -> ODESystem:
+    """Wolf–elk model with continuous periodic farmer-pressure pulses F(t).
+
+    Between pulses F = F_base; during each window of length ``pulse_width``
+    starting at t = 0, T, 2T, ... farmers jump to F_base + F_pulse. Only
+    farmers remove wolves; hunters remain a constant elk harvest.
+
+    Example: ``make_pulsed_farmer_model(T=15, F_pulse=90, pulse_width=2)``.
+    """
+    invalid = set(parameter_overrides) - set(PULSED_FARMER_DEFAULTS)
+    if invalid:
+        raise KeyError(f"Unknown pulsed-farmer parameter(s): {sorted(invalid)}")
+    parameters = {**PULSED_FARMER_DEFAULTS, **parameter_overrides}
+    # Keep scalar F aligned with baseline for any code that reads it directly.
+    if "F_base" in parameter_overrides and "F" not in parameter_overrides:
+        parameters["F"] = parameters["F_base"]
+    elif "F" in parameter_overrides and "F_base" not in parameter_overrides:
+        parameters["F_base"] = parameters["F"]
+    period = parameters["T"]
+    width = parameters["pulse_width"]
+    if period <= 0:
+        raise ValueError("T must be strictly positive")
+    if width < 0 or width > period:
+        raise ValueError("pulse_width must satisfy 0 <= pulse_width <= T")
+    max_F = parameters["F_base"] + parameters["F_pulse"]
+    _validate_wolf_elk_parameters(parameters, max_F=max_F)
+    return ODESystem(
+        rhs=wolf_elk_rhs, state_names=("Elk", "Wolves"),
+        parameters=parameters, title="Wolf–elk ecosystem (pulsed farmers)",
+    )
+
+
+__all__ = [
+    "ODESystem",
+    "WOLF_ELK_DEFAULTS",
+    "PULSED_FARMER_DEFAULTS",
+    "farmer_pressure",
+    "make_pulsed_farmer_model",
+    "make_wolf_elk_model",
+    "periodic_pulse",
+    "wolf_elk_rhs",
+]
