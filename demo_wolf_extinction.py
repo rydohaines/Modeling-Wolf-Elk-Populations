@@ -21,6 +21,11 @@ OUT = Path(__file__).resolve().parent
 T_SPAN = (0.0, 80.0)
 N = 1601
 
+# Policy-driven extinction run. Exposed at module level so other work
+# (e.g. wolf_reintroduction.ipynb) can start from where this run ends.
+EXTINCTION_PARAMS = {"KF": 110.0, "hE": 0.04, "hW": 0.35, "pF": 0.45}
+EXTINCTION_Y0 = (45.0, 12.0)
+
 
 def vegetation(E: np.ndarray, KF: float) -> np.ndarray:
     return np.clip(1.0 - E / max(KF, 1e-6), 0.0, 1.0)
@@ -28,13 +33,13 @@ def vegetation(E: np.ndarray, KF: float) -> np.ndarray:
 
 def main() -> None:
     with_wolves = make_wolf_elk_model(KF=100.0, hE=0.01, hW=0.0, pF=0.0)
-    extinction_policy = make_wolf_elk_model(KF=110.0, hE=0.04, hW=0.35, pF=0.45)
+    extinction_policy = make_wolf_elk_model(**EXTINCTION_PARAMS)
     no_wolves = make_wolf_elk_model(KF=110.0, hE=0.04, hW=0.0, pF=0.0)
     # Same habitat/hunting as coexistence, but wolves removed — fair vegetation compare.
     no_wolves_matched = make_wolf_elk_model(KF=100.0, hE=0.01, hW=0.0, pF=0.0)
 
     y0_coexist = (55.0, 18.0)
-    y0_pressure = (45.0, 12.0)
+    y0_pressure = EXTINCTION_Y0
     y0_gone = (45.0, 0.0)
 
     sol_coexist = with_wolves.solve(y0_coexist, T_SPAN, n_points=N)
