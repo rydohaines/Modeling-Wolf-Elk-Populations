@@ -2,7 +2,8 @@
 
 Run:  python demo_seasonal_trappers.py
 
-Saves ``seasonal_trappers_timeseries.png``. Policy knobs: T, pulse_width,
+Populations are plotted normalized by their initial values. Saves
+``seasonal_trappers_timeseries.png``. Policy knobs: T, pulse_width,
 Tr_base, Tr_pulse, c_TW.
 """
 
@@ -33,6 +34,7 @@ def main() -> None:
     model = make_seasonal_trapper_model()
     p = model.parameters
     y0 = (800.0, 40.0)
+    e0, w0 = y0
     t_span = (0.0, 120.0)
     solution = model.solve(y0, t_span=t_span, n_points=2401)
 
@@ -43,9 +45,10 @@ def main() -> None:
         ax_pop.axvspan(start, end, color="0.85", zorder=0)
         ax_tr.axvspan(start, end, color="0.85", zorder=0)
 
-    ax_pop.plot(solution.t, solution.y[0], lw=2, label="Elk")
-    ax_pop.plot(solution.t, solution.y[1], lw=2, label="Wolves")
-    ax_pop.set(ylabel="Population", title=model.title)
+    ax_pop.plot(solution.t, solution.y[0] / e0, lw=2, label="Elk / E0")
+    ax_pop.plot(solution.t, solution.y[1] / w0, lw=2, label="Wolves / W0")
+    ax_pop.set(ylabel="Relative population", title=model.title)
+    ax_pop.set_ylim(bottom=0.0)
     ax_pop.grid(alpha=0.25)
     ax_pop.legend(loc="best")
 
@@ -59,9 +62,9 @@ def main() -> None:
     out = Path(__file__).resolve().parent / "seasonal_trappers_timeseries.png"
     fig.savefig(out, dpi=150)
     print(f"Saved {out}")
-    print(f"Initial wolves: {y0[1]:.1f}")
-    print(f"Final wolves:   {solution.y[1, -1]:.3e}")
-    print(f"Final elk:      {solution.y[0, -1]:.1f}")
+    print(f"Initial wolves: {w0:.1f}")
+    print(f"Final wolves:   {solution.y[1, -1]:.3e} ({solution.y[1, -1] / w0:.3e}×W0)")
+    print(f"Final elk:      {solution.y[0, -1]:.1f} ({solution.y[0, -1] / e0:.2f}×E0)")
     print(f"Farmers F={p['F']} (off in trapper scenarios)")
     print(
         f"Trapping seasons: every T={p['T']} for width={p['pulse_width']}, "
