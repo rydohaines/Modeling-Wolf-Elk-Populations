@@ -20,29 +20,29 @@
 
 \begin{document}
 
-\title{Modeling the Effects of Human Policy on Wolf–Elk Population Dynamics}
-\author{Adam Eubanks, Ryan Haines, Norman Rasmussen, Jed woods}
+\title{Modeling the Effects of Human Policy on Wolf--Elk Population Dynamics}
+\author{Adam Eubanks, Ryan Haines, Norman Rasmussen, Jed Woods}
 
 % Change the date to match the date you actually wrote this paper
-\date{4 October 2024} % or use \today
+\date{18 November 2026} % or use \today
 
 \maketitle % this actually makes the title
 
 \begin{abstract}
-How does public policy impact an environment's predator-prey populations? In this paper, we apply Lotka-Volterra modeling concepts to model elk and Wolf populations under various federal policies regatrding farming, hunting, and the protection of these animals. We investigate how humans, as hunters, farmers, and trappers, influence the equilibrium of these systems. Specifically, we investigate how the wolf population went extinct in Yellowstone and the federal policy efforts to reintroduce wolves into the park. We add Beddington-DeAngelis to our modeling to explore how humans and wolves compete for elk in the density of their population. --Main conclusion.
+How does public policy impact an environment's predator-prey populations? In this paper, we apply Lotka-Volterra modeling concepts to elk and wolf populations under various Federal policies regarding farming, hunting, and the protection of these animals. We investigate how humans, as hunters, farmers, and trappers, influence the equilibrium of these ecosystems. Specifically, we investigate and model the wolf's extinction and subsequent return to Yellowstone. To enhance our predator-prey dynamics, we also add Beddington-DeAngelis to our modeling. We conclude that policy surrounding hunting and agriculture has huge cascading effects on the wolf-elk ecosystem that can be viewed almost immediately.
 \end{abstract}
 
 %% First Section
 \section{Background/Motivation}
 
 
-The reintroduction of wolves to Yellowstone National Park canonically represents one of the greatest success stories of ecological policy. Federal policy against wolves left them entirely extinct from the Yellowstone area for a period of 70 years \cite{nps_wolf_history}. During this time, the elk population surged to nearly 20,000 animals \cite{nps_elk}. This resulted in severe over-grazing that destabilized the ecology of the whole park \cite{nps_cycles,ripple2012}. In response, Federal agencies reintroduced the native apex predator to Yellowstone, resulting in a ``trophic cascade'' that promulgated throughout the food chain \cite{nps_wolf_history,ripple2012}. With a present population of 70-80 wolves, Yellowstone's elk population has stabilized to $\sim$5,500 animals \cite{nps_wolf_management,nps_elk,nps_wolf_elk_2024}. By increasing vegetation through predation, the reintroduction of wolves even improved seemingly non-related parts of the ecosystem, such as the beaver population, various bird populations, and flooding \cite{ripple2012,nps_beaver,baril2011}.
+The reintroduction of wolves to Yellowstone National Park represents one of the greatest success stories of ecological policy. Federal policy against wolves resulted in their extinction from the Yellowstone area for a period of 70 years \cite{nps_wolf_history}. During this time, the elk population surged to nearly 20,000 animals \cite{nps_elk}. This resulted in severe over-grazing that destabilized the ecology of the whole park \cite{nps_cycles,ripple2012}. In response, Federal agencies reintroduced the native apex predator to Yellowstone, resulting in a ``trophic cascade'' that promulgated throughout the whole food chain \cite{nps_wolf_history,ripple2012}. With a present population of 70-80 wolves, Yellowstone's elk population has stabilized to $\sim$5,500 animals \cite{nps_wolf_management,nps_elk,nps_wolf_elk_2024}. By increasing vegetation through predation, the reintroduction of wolves has even improved seemingly non-related parts of the ecosystem, such as the beaver population, various bird populations, and flooding \cite{ripple2012,nps_beaver,baril2011}.
 
-In contrast to Yellowstone's fierce protections of their wolf population, the State of Utah takes a very different approach \cite{nps_wolf_management,utah_wolf_plan}. Under Utah's Wolf Management Plan, wolves that encroach upon livestock are often subject to lethal removal \cite{utah_wolf_plan,utah_wolves}. In addition, the state manages its elk population through the distribution of tags in the winter \cite{utah_drawings}. Thus, Yellowstone and the State of Utah both take very different approaches to managing their ecologies, with Yellowstone focused on conservation and Utah focused on conservation within the bounds of human agriculture and gaming \cite{nps_wolf_management,utah_wolf_plan,utah_drawings}.
+Contrasting Yellowstone's fierce protections of their wolf population, the State of Utah takes a very different approach \cite{nps_wolf_management,utah_wolf_plan}. Under Utah's Wolf Management Plan, wolves that encroach upon livestock are often subject to lethal removal \cite{utah_wolf_plan,utah_wolves}. In addition, the state manages its elk population through the distribution of game tags in the winter \cite{utah_drawings}. Thus, Yellowstone and the State of Utah both take very different approaches to managing their ecologies, with Yellowstone focused on conservation and Utah focused on conservation within the bounds of human agriculture and gaming \cite{nps_wolf_management,utah_wolf_plan,utah_drawings}.
 
-We attempt to model these dynamics between wolves, elk, farmers, hunters, and available vegetation to motivate policy.
+We attempt to model these dynamics between wolves, elk, farmers, hunters, and available vegetation to motivate policy for an anthropocentric ecosystem.
 
-We add Beddington-DeAngelis to our Lotka-Volterra predator-prey system \cite{beddington1975,deangelis1975}. This incorporates interference among predators (hunters and wolves going after the same elk) and how predator consumption is proportional to prey density in our system \cite{beddington1975,deangelis1975}. It also incorporates how farmers change carrying capacity by siphoning off land for livestock and crops:
+Additionally, we include a Beddington--DeAngelis functional response to our Lotka--Volterra predator-prey system \cite{beddington1975,deangelis1975}, incorporating interference among predators (hunters and wolves going after the same elk) as well as prey density (hunting is easier when prey are closer together) \cite{beddington1975,deangelis1975}. We also include how farmers change carrying capacity by siphoning off land for livestock and crops:
 
 \begin{align*}
 \frac{dE}{dt} &= rE\left(1-\frac{E}{K_F}\right)
@@ -60,7 +60,7 @@ In this framework, new control variables reflect human policy choices:
 
     \item \textbf{$h_W$}: The per capita hunting rate of wolves by human hunters.
 
-    \item \textbf{$p_F$}: The lethal removal rate of wolves driven by farmer/livestock protection policies \cite{utah_wolves,utah_wolf_plan}.
+    \item \textbf{$p_F$}: The lethal removal rate of wolves driven by livestock protection policies \cite{utah_wolves,utah_wolf_plan}.
 \end{itemize}
 
 
@@ -78,9 +78,9 @@ In this framework, new control variables reflect human policy choices:
 %% Second Section 
 \section{Modeling}
 
-We choose to begin this modeling project by starting with a basic model.  
-This ODE models Elk population ($E$) and wolf population ($W$). 
-We included many elements and assumptions from the classic predator prey model such as; a carrying capacity for the elk, elk dying by wolves, wolf birth rate determined by number of elk, and a wolf death rate. Beyond this we add 3 additions to the model for our simple model. First, we assume that the farmers will make use of available forestation and therefore decrease the carrying capacity of the elk, we represent this by {math}. We also assume that farmers will kill wolves to stop them from killing live stock so we add {math}. Finally, we assume that hunters will hunt elk and add {math}. This all comes together to form our base model, that we then use to try our different modeling techniques. Below is this ODE;
+We choose to begin with a basic model.
+This ODE models elk population ($E$) and wolf population ($W$).
+We included many elements and assumptions from the classic predator-prey model such as: a carrying capacity for the elk, elk hunted by wolves, wolf birth rate determined by number of elk, and a wolf death rate. Beyond this, we add three additions to our baseline model. First, we assume that the farmers will make use of available land and therefore decrease the carrying capacity of the elk, which we represent by $K-\alpha_{FE}F$. We also assume that farmers will kill wolves to stop them from killing livestock, so we add $c_{FW}FW$. Finally, we assume that hunters will hunt elk and add $c_{HE}HE$. This all comes together to form our basic model:
 \begin{equation}
 \begin{aligned}
 \frac{dE}{dt}
@@ -135,7 +135,7 @@ C = K-\alpha_{FE}F,\qquad
 m = r_E-c_{HE}H,\qquad
 q = d_W+c_{FW}F.
 \]
-The Extinction equilibrium represents when both populations become 0 and go extinct. The Elk-only equilibrium represents the case when the wolves go extinct leading the elk to reach their carrying capacity. Finally, the Coexistence equilibrium is the case when both populations exist together. Using linearization techniques we get the cases for when each equilibrium point exists on the positive plane (negative populations do not exist), are asymptotically stable, and just stable. We provide a graph in Figure \ref{fig:fig1} illistrating the flow of this ODE.
+The Extinction equilibrium represents when both populations become 0 and go extinct. The Elk-only equilibrium represents the case when the wolves go extinct leading the elk to reach their carrying capacity. Finally, the Coexistence equilibrium is the case when both populations exist together. Using linearization techniques we get the cases for when each equilibrium point exists on the positive plane (negative populations do not exist), are asymptotically stable, and stable. We provide a graph in Figure \ref{fig:fig1} illustrating the flow of this ODE.
 
 
 \begin{table}[h]
@@ -182,12 +182,11 @@ Never \\
 \end{figure}
 
 
-While we know what is needed for there to be equilibrium we have not yet been able to derive physical meanings from these inequalities. 
 
 
 \subsection{Frontier Expansion}
 
-One of the first ideas we had was to try to model a frontier expansion. Imagining Farmers and Hunters settling a new area. To model this, we assumed that the expansion would start at 0\% and end with 100\%. We added a function $u(x):\mathbb R \to [0,1]$  to show how this expansion occurs. We used 3 variations
+One of the first ideas we had was to try to model a "frontier expansion", imagining farmers and hunters settling a new area. To model this, we assumed that the expansion would start at 0\% and end with 100\%. We added a function $u(x):\mathbb R \to [0,1]$  to show how this expansion occurs. We used 3 variations:
 \[
 u(t)=\operatorname{clip}\!\left(\frac{t-t_0}{D},\,0,\,1\right),
 \qquad D>0,
@@ -201,7 +200,7 @@ f_{\mathrm{arctangent}}(u) & =
      {2\arctan(4)}.
 \end{aligned}
 \]
-The linear function represents a baseline, the exponential a slow start that picks up momentum, and the arctangent that assumes it slowly picks up and slows down at the end. A graph of these functions is provide in Figure \ref{fig:fig2}.
+The linear function represents a baseline, the exponential a slow start that picks up momentum, and the arctangent a slow pickup then slowdown at the end. A graph of these functions is provided in Figure \ref{fig:fig2}.
 
 \begin{figure}
     \centering
@@ -210,12 +209,12 @@ The linear function represents a baseline, the exponential a slow start that pic
     \label{fig:fig2}
 \end{figure}
 
-We hoped that we would see that adding this slow introduction would change the behavior of the model, perhaps showing that a slow introduction would preserve an ecosystem while fast introduction would destroy this. However, this what not the case as seen Figures \ref{fig:fig3} and \ref{fig:fig4}. Figure \ref{fig:fig3} shows how the introduction parameters do not change the equilibrium, and Figure \ref{fig:fig4} shows how the introduction causes convergence to the equilibrium to take much more time. 
+We hoped that we would see that adding this slow introduction would change the behavior of the model, perhaps showing that a slow introduction would preserve an ecosystem while fast introduction would destroy it. However, this was not the case as seen in Figures \ref{fig:fig3} and \ref{fig:fig4}. Figure \ref{fig:fig3} shows how the introduction parameters do not change the equilibrium, and Figure \ref{fig:fig4} shows how the introduction causes convergence to the equilibrium to take much more time. 
 
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{frontier_introduction_population_response.png}
-    \caption{Elk and wolf population responses to linear, exponential, and arctangent introductions of farmer and hunter pressure. As you can see each introduction method has slightly diffferent curves, but settles on the same equilbirum. Each simulation starts at $(E,W)=(600,50)$; pressure rises from zero at $t=10$ to its maximum at $t=45$. with $F_{\max}=40$ and $H_{\max}=25$. This Figure uses the same parameters as Figure \ref{fig:fig2} except for $F_\max, H_\max$.}
+    \caption{Elk and wolf population responses to linear, exponential, and arctangent introductions of farmer and hunter pressure. As you can see each introduction method has slightly different curves, but settles on the same equilibrium. Each simulation starts at $(E,W)=(600,50)$; pressure rises from zero at $t=10$ to its maximum at $t=45$, with $F_{\max}=40$ and $H_{\max}=25$. This figure uses the same parameters as Figure~\ref{fig:fig2} except for $F_{\max}$ and $H_{\max}$.}
     \label{fig:fig3}
 \end{figure}
 
@@ -223,14 +222,14 @@ We hoped that we would see that adding this slow introduction would change the b
     \centering
     \includegraphics[width=1\linewidth]{playground2_wolf_vs_elk.png}
     \caption{Wolf--elk phase-plane trajectories comparing gradual pressure introduction with full farmer and hunter pressure from the start. It is clear that the non-introduction case converges to the equilibrium much faster than the gradual introduction case. 
-    Both simulations begin at $(E,W)=(650,110)$. In the gradual case, pressure follows a smoothstep ramp from $t=10$ to $t=11$; in the full-force case, $F=40$ and $H=25$. This Figure uses the same parameters as Figure \ref{fig:fig2} except for $F_\max, H_\max$.}
+    Both simulations begin at $(E,W)=(650,110)$. In the gradual case, pressure follows a smoothstep ramp from $t=10$ to $t=11$; in the full-force case, $F=40$ and $H=25$. This figure uses the same parameters as Figure~\ref{fig:fig2} except for $F_{\max}$ and $H_{\max}$.}
     \label{fig:fig4}
 \end{figure}
 
 
 \subsection{Wolf Reintroduction}
 
-Keeping the constants the same from the previous wolf extinction model, we next explore the policy that wolves were able to be reintroduced into Yellowstone. According to the National Park Service, they took wolves from around the area and reintroduced them in groups of about 15 at a time. To model this, we added a release rate variable($R(t) $) that did not depend on $W$. At time steps we chose, we added 15 wolves at a time and wanted to see how this would affect our model. Also, significantly, with the reintroduction of wolves, they added a policy where the wolves could not be killed and were protected on Yellowstone land. This, we added in a ($ \phi(t) $) that can be turned on or off. We turn off the protection by adding a zero to the farmer killing rate and the wolf hunter rate. With these removed, we see that the wolves do not have a problem bringing the elk population down to a new equilibrium where both wolves and elk are stable.
+Keeping the constants the same from the previous wolf extinction model, we next explore the policy that wolves were able to be reintroduced into Yellowstone. According to the National Park Service, they took wolves from around the area and reintroduced them in groups of about 15 at a time. To model this, we added a release rate variable $R(t)$ that did not depend on $W$. At time steps we chose, we added 15 wolves at a time and wanted to see how this would affect our model. Also, with the reintroduction of wolves, they added a policy where the wolves could not be killed and were protected on Yellowstone land. We accounted for this with a factor $\phi(t)$ that can be turned on or off. We turn off the protection by adding a zero to the farmer killing rate and the wolf hunter rate. With these removed, we see that the wolves do not have a problem bringing the elk population down to a new equilibrium where both wolves and elk are stable.
 \begin{equation}
     \frac{dW}{dt}
 =
@@ -261,7 +260,7 @@ Populations are expressed in scaled model units
 \end{figure}
 
 
-We see that, with simple reintroduction and various numbers of wolves that we release, the wolves and elk will ultimately reach this new equilibrium that is protected. This equilibrium is shown below 
+We see that, with simple reintroduction and various numbers of wolves that we release, the wolves and elk will ultimately reach this new protected equilibrium shown below 
 
 
 \begin{figure}
@@ -288,24 +287,24 @@ equilibrium within each protection scenario.}
 
 
 
-\subsection{Wolf Hunting Polcies}
+\subsection{Wolf Hunting Policies}
 
-The underlying dynamics are a predator–prey system for elk and wolves. Elk grow subject to a carrying capacity, wolves recruit through predation on elk, and both populations experience natural mortality. In the trapping experiments, farmers are set to zero so that the only additional human pressure on wolves is hunting. This isolates the effect of harvest rules on the coupled populations.
+The underlying dynamics are a predator--prey system for elk and wolves. Elk grow subject to a carrying capacity, wolves recruit through predation on elk, and both populations experience natural mortality. In the trapping experiments, farmers are set to zero so that the only additional human pressure on wolves is hunting. This isolates the effect of harvest rules on the coupled populations.
 Hunting effort is updated periodically rather than continuously. At the start of each decision interval, effort is computed from the wolf abundance recorded at the previous decision and is then held fixed until the next update. Wolf losses due to hunting increase with both current wolf abundance and current effort.
-Tracked adaptive policy
+\subsubsection{Tracked adaptive policy}
 The managed (tracked) rule is abundance-dependent. When the lagged wolf census exceeds a prescribed target, effort is increased; when abundance falls below the target, effort is reduced, subject to a lower bound of zero and an upper cap. Under the default parameters, this feedback produces a stable positive wolf population and a correspondingly stable elk trajectory. In that regime, the policy functions as a control mechanism that regulates wolf density rather than driving the predator to extinction.
-Untracked harvest
+\subsubsection{Untracked harvest}
 A second scenario retains the same tracked rule and adds an independent, stochastic component of wolf removal. This term represents harvest outside the managed quota, such as unreported take. Importantly, the noise enters through removals, not through observation error in the census: managers still respond to the true lagged count, but total hunting pressure is the sum of managed effort and untracked effort.
 Because untracked removals can remain positive even when the managed policy has already reduced legal effort, the stabilizing feedback of the tracked rule can be weakened or overridden.
-Role of the policy in the system
+\subsubsection{Role of the policy in the system}
 The policy matters because it introduces a state-dependent human feedback into the ecological model. Equilibrium behavior and stability therefore depend not only on biological parameters, but also on policy parameters such as the abundance target, the responsiveness of effort to deviations from that target, the length of the decision interval, and effort caps.
 Under the tracked policy alone, the defaults support coexistence. When the same policy is supplemented by untracked harvest, outcomes become path-dependent: in some realizations wolves persist at reduced abundance, while in others they fall below a quasi-extinction threshold and remain extinct. After wolf extinction, elk increase toward carrying capacity, consistent with release from predation. The principal long-run ecological consequence is therefore loss of the predator population, not collapse of elk.
 These comparisons indicate that an apparently adequate managed harvest rule can fail once removals include a component outside managerial control. Evaluating hunting policy in this system therefore requires accounting for both the formal control rule and additional untracked pressure on wolves.
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{trapper_policies_comparison.png}
-    \caption{Elk and wolf counts are shown relative to their starting values under a hunting rule that raises effort when the lagged wolf census is above a target and lowers it when the census is below. The top panel uses only that tracked rule and both populations stay positive, while the middle and bottom panels add random untracked wolf removals and show one case where wolves persist and one where they go extinct}
-    \label{fig:fig6}
+    \caption{Elk and wolf counts are shown relative to their starting values under a hunting rule that raises effort when the lagged wolf census is above a target and lowers it when the census is below. The top panel uses only that tracked rule and both populations stay positive, while the middle and bottom panels add random untracked wolf removals and show one case where wolves persist and one where they go extinct.}
+    \label{fig:fig7}
 \end{figure}
 
 
@@ -314,33 +313,31 @@ These comparisons indicate that an apparently adequate managed harvest rule can 
 %% Third Section
 \section{Results}
 
-Clearly and succinctly state and describe the conclusions that you can draw from the model you have achieved (or the many failed attempts), and your numerical simulations.  Does your model(s) perform well quantitatively or qualitatively?
+% Clearly and succinctly state and describe the conclusions that you can draw from the model you have achieved (or the many failed attempts), and your numerical simulations.  Does your model(s) perform well quantitatively or qualitatively?
 
 %%Fourth Section
 \section{Analysis/Conclusions}
 
 Wolf Extinction Analysis:
-When wolves go extinct, the elk population quickly shoots up to the carrying capacity. However, the carrying capacity is susceptible to overgrazing, as shown in Figure \ref{fig:fig7}
+When wolves go extinct, the elk population quickly shoots up to the carrying capacity. However, the carrying capacity is susceptible to overgrazing, as shown in Figure~\ref{fig:fig8}.
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{wolf_extinction_comparison.png}
-    % \caption{Enter Caption}
-    \label{fig:fig7}
+    \refstepcounter{figure}\label{fig:fig8}
 \end{figure}
 
-The presence of wolves greatly decreases the elk population below carrying capacity, preventing overgrazing. We find that farmer-induced extinction of wolves similarly rapidly increases elk population to carrying capacity. Even when farmers slowly get rid of wolves, as shown in \ref{fig:fig7}, the elk still shoot up to a level that would likely produce overgrazing.
+The presence of wolves greatly decreases the elk population below carrying capacity, preventing overgrazing. We find that farmer-induced extinction of wolves similarly rapidly increases elk population to carrying capacity. Even when farmers slowly get rid of wolves, as shown in Figure~\ref{fig:fig9}, the elk still shoot up to a level that would likely produce overgrazing.
 
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{wolf_extinction_timeseries.png}
-    % \caption{Enter Caption}
-    \label{fig:fig7}
+    \refstepcounter{figure}\label{fig:fig9}
 \end{figure}
 
 
 \section{AI Disclosure}
 
-We used ai to help accelerate the rate of experimentation, code production and translating our models in LaTex. It also helped find resources for our literature review and explore the space adjacent to our research.. This helped to iterate faster, validate models and plot the results among other things.  The ideas presented, modeling decisions, theoretical explorations and conclusions were ours. 
+We used AI to help accelerate code production, experimentation, and translating our models to LaTeX. It also helped find resources for our literature review and explore the space adjacent to our research. This helped to iterate faster, validate models and plot the results among other things.  The ideas presented, modeling decisions, theoretical explorations and conclusions were ours. 
 
 \vspace*{1in}
 This part should all be done before you get to \emph{page 11}.  The bibliography can spill on to page 11, but we won't read text or look at figures that go past the end of page 10.
