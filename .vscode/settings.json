@@ -1,3 +1,29 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}\.venv\Scripts\python.exe"
+    "python.defaultInterpreterPath": "${workspaceFolder}\.venv\Scripts\python.exe",
+
+    // LaTeX Workshop: build with pdflatex directly (latexmk would need Perl).
+    "latex-workshop.latex.tools": [
+        {
+            "name": "pdflatex",
+            "command": "pdflatex",
+            "args": ["-synctex=1", "-interaction=nonstopmode", "-file-line-error", "%DOC%"]
+        },
+        {
+            "name": "bibtex",
+            "command": "bibtex",
+            "args": ["%DOCFILE%"]
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "pdflatex x2",
+            "tools": ["pdflatex", "pdflatex"]
+        },
+        {
+            "name": "pdflatex -> bibtex -> pdflatex x2 (once refs.bib exists)",
+            "tools": ["pdflatex", "bibtex", "pdflatex", "pdflatex"]
+        }
+    ],
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.view.pdf.viewer": "tab"
 }
