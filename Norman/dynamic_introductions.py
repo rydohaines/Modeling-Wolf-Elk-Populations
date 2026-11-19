@@ -1,4 +1,4 @@
-"""Time-dependent introductions built on the repository's wolf–elk model."""
+"""Time-dependent introductions built on Norman's Beddington–DeAngelis model."""
 from __future__ import annotations
 
 import sys
@@ -8,16 +8,10 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 
-_PARENT = Path(__file__).resolve().parent.parent
-if (_PARENT / "ecosystem_ode.py").is_file():
-    sys.path.insert(0, str(_PARENT))
-    from ecosystem_ode import WOLF_ELK_DEFAULTS, wolf_elk_rhs
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from repo_model_snapshot import WOLF_ELK_DEFAULTS, wolf_elk_rhs
 
-    MODEL_SOURCE = "Repository ecosystem_ode.py"
-else:
-    from repo_model_snapshot import WOLF_ELK_DEFAULTS, wolf_elk_rhs
-
-    MODEL_SOURCE = "Bundled snapshot of repository equations"
+MODEL_SOURCE = "Norman Beddington–DeAngelis model"
 
 SHAPES = ("exponential", "linear", "smoothstep")
 SCENARIOS = ("control", "farmer", "hunter", "both")
@@ -52,7 +46,7 @@ def pressures(t, scenario, shape, max_farmers, max_hunters, start, duration):
 def make_rhs(scenario="both", shape="linear", *, max_farmers=40.0,
              max_hunters=25.0, start=10.0, duration=35.0,
              parameters=None):
-    """Wrap the original repository RHS with time-varying F and H."""
+    """Apply time-varying farmer and hunter pressure to the BD model."""
     p = dict(WOLF_ELK_DEFAULTS)
     if parameters:
         unknown = set(parameters) - set(WOLF_ELK_DEFAULTS)

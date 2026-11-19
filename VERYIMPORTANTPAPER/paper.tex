@@ -78,101 +78,60 @@ In this framework, new control variables reflect human policy choices:
 %% Second Section 
 \section{Modeling}
 
-We choose to begin with a basic model.
-This ODE models elk population ($E$) and wolf population ($W$).
-We included many elements and assumptions from the classic predator-prey model such as: a carrying capacity for the elk, elk hunted by wolves, wolf birth rate determined by number of elk, and a wolf death rate. Beyond this, we add three additions to our baseline model. First, we assume that the farmers will make use of available land and therefore decrease the carrying capacity of the elk, which we represent by $K-\alpha_{FE}F$. We also assume that farmers will kill wolves to stop them from killing livestock, so we add $c_{FW}FW$. Finally, we assume that hunters will hunt elk and add $c_{HE}HE$. This all comes together to form our basic model:
-\begin{equation}
-\begin{aligned}
-\frac{dE}{dt}
-&= r_E E\left(1-\frac{E}{K-\alpha_{FE}F}\right)
--aEW-c_{HE}HE,\\
-\frac{dW}{dt}
-&= \eta aEW-d_WW-c_{FW}FW.
-\end{aligned}
-\end{equation}
-
-\begin{itemize}
-    \item $E(t)\geq0$: Elk population at time $t$.
-    \item $r_E >0$: Growth rate of elk.
-    \item $K>0$: Natural carrying capacity of the elk population.
-    \item $W(t)\geq0$: Wolf population at time $t$.
-    \item $a>0$: Wolf predation rate coefficient on elk.
-    \item $\eta>0$: Conversion efficiency of consumed elk into wolf population growth.
-    \item $d_W>0$: Mortality rate of wolves.
-    \item $F\geq0$: Constant farmer pressure.
-    \item $\alpha_{FE}\geq0$: Reduction in elk carrying capacity per unit of farmer pressure.
-    \item $c_{FW}\geq0$: Wolf mortality rate per unit of farmer pressure.
-    \item $H\geq0$: Constant hunter pressure.
-    \item $c_{HE}\geq0$: Elk mortality rate per unit of hunter pressure.
-\end{itemize}
-
-Performing simple algebra we can find the equilibrium points
-
-\begin{enumerate}
-    \item \textbf{Extinction equilibrium:}
-    \[
-    (E,W) = (0,0).
-    \]
-
-    \item \textbf{Elk-only equilibrium:}
-    \[
-    (E,W) = \left(\frac{Cm}{r_E},0\right).
-    \]
-
-    \item \textbf{Coexistence equilibrium:}
-    \[
-    (E,W) =
-    \left(
-    \frac{q}{\eta a},
-    \frac{m}{a}-\frac{r_E q}{\eta a^2 C}
-    \right).
-    \]
-\end{enumerate}
-
-where
+We begin our modeling by analyzing the behavior of the various equilibrium
+For convenience, define
 \[
-C = K-\alpha_{FE}F,\qquad
-m = r_E-c_{HE}H,\qquad
-q = d_W+c_{FW}F.
+\rho=r-h_E,\qquad q=m+h_W+p_F,\qquad
+A=\frac{cbr}{K_F},\qquad
+B=a(b-qh)-cb\rho.
 \]
-The Extinction equilibrium represents when both populations become 0 and go extinct. The Elk-only equilibrium represents the case when the wolves go extinct leading the elk to reach their carrying capacity. Finally, the Coexistence equilibrium is the case when both populations exist together. Using linearization techniques we get the cases for when each equilibrium point exists on the positive plane (negative populations do not exist), are asymptotically stable, and stable. We provide a graph in Figure \ref{fig:fig1} illustrating the flow of this ODE.
+The extinction equilibrium is $(0,0)$. When $\rho>0$, an elk-only
+equilibrium also exists:
+\[
+(E,W)=\left(\frac{K_F\rho}{r},0\right).
+\]
 
+A coexistence equilibrium can be written using the positive root
+\[
+E^*=\frac{-B+\sqrt{B^2+4Aq}}{2A},
+\qquad
+W^*=\frac{bE^*}{q}
+\left(\rho-\frac{rE^*}{K_F}\right).
+\]
+It exists in the positive quadrant when $q>0$ and $W^*>0$.
 
-\begin{table}[h]
-\centering
-\small
-\renewcommand{\arraystretch}{1.8}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Equilibrium} &
-\textbf{Nonnegative Plane} &
-\textbf{Asymptotically Stable} &
-\textbf{Stable Only} \\
-\hline
+The extinction equilibrium has eigenvalues $\rho$ and $-q$, so it is
+locally asymptotically stable when $\rho\leq 0$ and $q>0$. At the
+elk-only equilibrium, the elk-direction eigenvalue is $-\rho$ and the
+wolf-invasion eigenvalue is
+\[
+\lambda_W=
+\frac{baE^*}{1+ahE^*}-q,
+\qquad E^*=\frac{K_F\rho}{r}.
+\]
+Thus, the elk-only equilibrium is locally asymptotically stable when
+$\rho>0$ and $\lambda_W<0$, and unstable when $\lambda_W>0$.
 
-$(0,0)$ &
-Always &
-$m \leq 0,\ q>0$ &
-$m \leq 0,\ q=0$ \\
-\hline
-
-$\left(\frac{Cm}{r_E},0\right)$ &
-$m>0$ &
-$q \geq \frac{\eta a Cm}{r_E}$ &
-Never \\
-\hline
-
-$\left(
-    \frac{q}{\eta a},
-    \frac{m}{a}-\frac{r_E q}{\eta a^2 C}
-    \right)$ &
-$q>0,\ \eta aCm>r_Eq$ &
-$q>0,\ \eta aCm>r_Eq$ &
-Never \\
-\hline
-\end{tabular}
-\caption{Existence and local stability of equilibrium points.}
-\end{table}
+For the coexistence equilibrium, let
+\[
+D^*=1+ahE^*+cW^*.
+\]
+Its Jacobian is
+\[
+J^*=
+\begin{pmatrix}
+-\dfrac{rE^*}{K_F}+\dfrac{a^2hE^*W^*}{(D^*)^2}
+&
+-\dfrac{aE^*(1+ahE^*)}{(D^*)^2}
+\\[8pt]
+\dfrac{baW^*(1+cW^*)}{(D^*)^2}
+&
+-\dfrac{bacE^*W^*}{(D^*)^2}
+\end{pmatrix}.
+\]
+The coexistence equilibrium is locally asymptotically stable when
+$\operatorname{tr}(J^*)<0$ and $\det(J^*)>0$. Equality cases are
+nonhyperbolic and require separate analysis which is not the focus of this paper.
 
 \begin{figure}
     \centering
@@ -183,6 +142,14 @@ Never \\
 
 
 
+
+
+
+
+%% Third Section
+\section{Results}
+
+% Clearly and succinctly state and describe the conclusions that you can draw from the model you have achieved (or the many failed attempts), and your numerical simulations.  Does your model(s) perform well quantitatively or qualitatively?
 
 \subsection{Frontier Expansion}
 
@@ -308,12 +275,6 @@ These comparisons indicate that an apparently adequate managed harvest rule can 
 \end{figure}
 
 
-
-
-%% Third Section
-\section{Results}
-
-% Clearly and succinctly state and describe the conclusions that you can draw from the model you have achieved (or the many failed attempts), and your numerical simulations.  Does your model(s) perform well quantitatively or qualitatively?
 
 %%Fourth Section
 \section{Analysis/Conclusions}
