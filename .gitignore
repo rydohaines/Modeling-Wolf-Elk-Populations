@@ -1,2 +1,6 @@
 __pycache__/
 .venv/
+
+# LaTeX build output (keep paper.tex tracked)
+VERYIMPORTANTPAPER/paper*
+!VERYIMPORTANTPAPER/paper.tex

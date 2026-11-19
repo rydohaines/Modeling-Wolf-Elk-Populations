@@ -12,6 +12,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{textcomp}
 \usepackage{newunicodechar}
+\graphicspath{{../}{../Norman/paper/figures/}} % figures live outside this folder
 
  
 
@@ -194,9 +195,49 @@ We hoped that we would see that adding this slow introduction would change the b
 \end{figure}
 
 
+
+
+\subsection{Wolf Hunting Policies}
+
+The underlying dynamics are a predator--prey system for elk and wolves. Elk grow subject to a carrying capacity, wolves recruit through predation on elk, and both populations experience natural mortality. In the trapping experiments, farmers are set to zero so that the only additional human pressure on wolves is hunting. This isolates the effect of harvest rules on the coupled populations.
+Hunting effort is updated periodically rather than continuously. At the start of each decision interval, effort is computed from the wolf abundance recorded at the previous decision and is then held fixed until the next update. Wolf losses due to hunting increase with both current wolf abundance and current effort.
+\subsubsection{Tracked adaptive policy}
+The managed (tracked) rule is abundance-dependent. When the lagged wolf census exceeds a prescribed target, effort is increased; when abundance falls below the target, effort is reduced, subject to a lower bound of zero and an upper cap. Under the default parameters, this feedback produces a stable positive wolf population and a correspondingly stable elk trajectory. In that regime, the policy functions as a control mechanism that regulates wolf density rather than driving the predator to extinction.
+\subsubsection{Untracked harvest}
+A second scenario retains the same tracked rule and adds an independent, stochastic component of wolf removal. This term represents harvest outside the managed quota, such as unreported take. Importantly, the noise enters through removals, not through observation error in the census: managers still respond to the true lagged count, but total hunting pressure is the sum of managed effort and untracked effort.
+Because untracked removals can remain positive even when the managed policy has already reduced legal effort, the stabilizing feedback of the tracked rule can be weakened or overridden.
+\subsubsection{Role of the policy in the system}
+The policy matters because it introduces a state-dependent human feedback into the ecological model. Equilibrium behavior and stability therefore depend not only on biological parameters, but also on policy parameters such as the abundance target, the responsiveness of effort to deviations from that target, the length of the decision interval, and effort caps.
+Under the tracked policy alone, the defaults support coexistence. When the same policy is supplemented by untracked harvest, outcomes become path-dependent: in some realizations wolves persist at reduced abundance, while in others they fall below a quasi-extinction threshold and remain extinct. After wolf extinction, elk increase toward carrying capacity, consistent with release from predation. The principal long-run ecological consequence is therefore loss of the predator population, not collapse of elk.
+These comparisons indicate that an apparently adequate managed harvest rule can fail once removals include a component outside managerial control. Evaluating hunting policy in this system therefore requires accounting for both the formal control rule and additional untracked pressure on wolves.
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{trapper_policies_comparison.png}
+    \caption{Elk and wolf counts are shown relative to their starting values under a hunting rule that raises effort when the lagged wolf census is above a target and lowers it when the census is below. The top panel uses only that tracked rule and both populations stay positive, while the middle and bottom panels add random untracked wolf removals and show one case where wolves persist and one where they go extinct.}
+    \label{fig:fig7}
+\end{figure}
+
+\subsection{Wolf Extinction}
+
+Wolf Extinction Analysis:
+When wolves go extinct, the elk population quickly shoots up to the carrying capacity. However, the carrying capacity is susceptible to overgrazing, as shown in Figure~\ref{fig:fig8}.
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{wolf_extinction_comparison.png}
+    \refstepcounter{figure}\label{fig:fig8}
+\end{figure}
+
+The presence of wolves greatly decreases the elk population below carrying capacity, preventing overgrazing. We find that farmer-induced extinction of wolves similarly rapidly increases elk population to carrying capacity. Even when farmers slowly get rid of wolves, as shown in Figure~\ref{fig:fig9}, the elk still shoot up to a level that would likely produce overgrazing.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{wolf_extinction_timeseries.png}
+    \refstepcounter{figure}\label{fig:fig9}
+\end{figure}
+
 \subsection{Wolf Reintroduction}
 
-Keeping the constants the same from the previous wolf extinction model, we next explore the policy that wolves were able to be reintroduced into Yellowstone. According to the National Park Service, they took wolves from around the area and reintroduced them in groups of about 15 at a time. To model this, we added a release rate variable $R(t)$ that did not depend on $W$. At time steps we chose, we added 15 wolves at a time and wanted to see how this would affect our model. Also, with the reintroduction of wolves, they added a policy where the wolves could not be killed and were protected on Yellowstone land. We accounted for this with a factor $\phi(t)$ that can be turned on or off. We turn off the protection by adding a zero to the farmer killing rate and the wolf hunter rate. With these removed, we see that the wolves do not have a problem bringing the elk population down to a new equilibrium where both wolves and elk are stable.
+The impact that federal policy can have on the wolf elk population is best exemplified by Yellowstone National Park. Due to federal policies wolves were over hunted and went completely extinct from the population. Eventually, due to the elk population rising and overgrazing, federal policy changed and they attempted to reintroduce them into the enviroment According to the National Park Service, they took wolves from around the area and reintroduced them in groups of about 15 at a time. To model this, we added a release rate variable $R(t)$ that did not depend on $W$. At time steps we chose, we added 15 wolves at a time and wanted to see how this would affect our model. Also, with the reintroduction of wolves, they added a policy where the wolves could not be killed and were protected on Yellowstone land. We accounted for this with a factor $\phi(t)$ that can be turned on or off. We turn off the protection by adding a zero to the farmer killing rate and the wolf hunter rate. With these removed, we see that the wolves do not have a problem bringing the elk population down to a new equilibrium where both wolves and elk are stable.
 \begin{equation}
     \frac{dW}{dt}
 =
@@ -252,48 +293,10 @@ equilibrium within each protection scenario.}
     \label{fig:fig6}
 \end{figure}
 
-
-
-\subsection{Wolf Hunting Policies}
-
-The underlying dynamics are a predator--prey system for elk and wolves. Elk grow subject to a carrying capacity, wolves recruit through predation on elk, and both populations experience natural mortality. In the trapping experiments, farmers are set to zero so that the only additional human pressure on wolves is hunting. This isolates the effect of harvest rules on the coupled populations.
-Hunting effort is updated periodically rather than continuously. At the start of each decision interval, effort is computed from the wolf abundance recorded at the previous decision and is then held fixed until the next update. Wolf losses due to hunting increase with both current wolf abundance and current effort.
-\subsubsection{Tracked adaptive policy}
-The managed (tracked) rule is abundance-dependent. When the lagged wolf census exceeds a prescribed target, effort is increased; when abundance falls below the target, effort is reduced, subject to a lower bound of zero and an upper cap. Under the default parameters, this feedback produces a stable positive wolf population and a correspondingly stable elk trajectory. In that regime, the policy functions as a control mechanism that regulates wolf density rather than driving the predator to extinction.
-\subsubsection{Untracked harvest}
-A second scenario retains the same tracked rule and adds an independent, stochastic component of wolf removal. This term represents harvest outside the managed quota, such as unreported take. Importantly, the noise enters through removals, not through observation error in the census: managers still respond to the true lagged count, but total hunting pressure is the sum of managed effort and untracked effort.
-Because untracked removals can remain positive even when the managed policy has already reduced legal effort, the stabilizing feedback of the tracked rule can be weakened or overridden.
-\subsubsection{Role of the policy in the system}
-The policy matters because it introduces a state-dependent human feedback into the ecological model. Equilibrium behavior and stability therefore depend not only on biological parameters, but also on policy parameters such as the abundance target, the responsiveness of effort to deviations from that target, the length of the decision interval, and effort caps.
-Under the tracked policy alone, the defaults support coexistence. When the same policy is supplemented by untracked harvest, outcomes become path-dependent: in some realizations wolves persist at reduced abundance, while in others they fall below a quasi-extinction threshold and remain extinct. After wolf extinction, elk increase toward carrying capacity, consistent with release from predation. The principal long-run ecological consequence is therefore loss of the predator population, not collapse of elk.
-These comparisons indicate that an apparently adequate managed harvest rule can fail once removals include a component outside managerial control. Evaluating hunting policy in this system therefore requires accounting for both the formal control rule and additional untracked pressure on wolves.
-\begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{trapper_policies_comparison.png}
-    \caption{Elk and wolf counts are shown relative to their starting values under a hunting rule that raises effort when the lagged wolf census is above a target and lowers it when the census is below. The top panel uses only that tracked rule and both populations stay positive, while the middle and bottom panels add random untracked wolf removals and show one case where wolves persist and one where they go extinct.}
-    \label{fig:fig7}
-\end{figure}
-
-
-
 %%Fourth Section
 \section{Analysis/Conclusions}
 
-Wolf Extinction Analysis:
-When wolves go extinct, the elk population quickly shoots up to the carrying capacity. However, the carrying capacity is susceptible to overgrazing, as shown in Figure~\ref{fig:fig8}.
-\begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{wolf_extinction_comparison.png}
-    \refstepcounter{figure}\label{fig:fig8}
-\end{figure}
 
-The presence of wolves greatly decreases the elk population below carrying capacity, preventing overgrazing. We find that farmer-induced extinction of wolves similarly rapidly increases elk population to carrying capacity. Even when farmers slowly get rid of wolves, as shown in Figure~\ref{fig:fig9}, the elk still shoot up to a level that would likely produce overgrazing.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{wolf_extinction_timeseries.png}
-    \refstepcounter{figure}\label{fig:fig9}
-\end{figure}
 
 
 \section{AI Disclosure}
