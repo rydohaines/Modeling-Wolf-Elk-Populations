@@ -1,4 +1,4 @@
-"""Generate the figures used in the frontier-introduction paper section."""
+"""Generate frontier-introduction figures for their source folder and the paper."""
 from __future__ import annotations
 
 import sys
@@ -22,9 +22,11 @@ from repo_model_snapshot import WOLF_ELK_DEFAULTS, wolf_elk_rhs
 
 FIGURES = HERE / "figures"
 FIGURES.mkdir(parents=True, exist_ok=True)
+PAPER_FIGURES = REPO / "VERYIMPORTANTPAPER" / "figures"
+PAPER_FIGURES.mkdir(parents=True, exist_ok=True)
 
 # USER-EDITABLE MODEL SETTINGS
-# Change these values and rerun this file to regenerate the PNG figures.
+# Change these values and rerun this file to regenerate the PNG and paper PDF figures.
 FRONTIER_START = 10.0
 FRONTIER_DURATION = 35.0
 FRONTIER_END_TIME = 240.0
@@ -91,7 +93,8 @@ def make_system(shape: str) -> ODESystem:
 
 
 def save(fig, name: str) -> None:
-    fig.savefig(FIGURES / f"{name}.png", dpi=220, bbox_inches="tight")
+    fig.savefig(FIGURES / f"{name}.png", dpi=300)
+    fig.savefig(PAPER_FIGURES / f"{name}.pdf", dpi=300)
     plt.close(fig)
 
 
@@ -108,7 +111,9 @@ def introduction_schedule_figure() -> None:
         t=times,
         y=np.vstack([ramp(times, shape, FRONTIER_START, FRONTIER_DURATION) for shape in SHAPES]),
     )
-    fig, ax = plotting_model.plot_time_series(solution, title="Three ways to reach full settlement pressure")
+    fig, ax = plotting_model.plot_time_series(solution)
+    fig.set_size_inches(5.0, 2.76)
+    ax.set_title("")
     for line, shape in zip(ax.lines, SHAPES):
         line.set_color(COLORS[shape])
         line.set_linewidth(2.6)
@@ -131,7 +136,7 @@ def population_response_figure() -> None:
         for shape, system in systems.items()
     }
 
-    fig, axes = plt.subplots(2, 1, figsize=(9.3, 7.0), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(5.0, 5.34), sharex=True)
     for shape in SHAPES:
         solution = solutions[shape]
         for index, ax in enumerate(axes):
@@ -148,7 +153,6 @@ def population_response_figure() -> None:
     axes[0].set_title("Elk response")
     axes[1].set_title("Wolf response")
     axes[-1].set_xlabel("Time")
-    fig.suptitle("Effect of introduction functions on population dynamics", y=0.99)
     for ax in axes:
         ax.axvline(FRONTIER_START, color="#666666", linestyle="--", linewidth=1.1)
         ax.axvline(FRONTIER_START + FRONTIER_DURATION, color="#666666", linestyle="--", linewidth=1.1)
@@ -200,13 +204,14 @@ def playground2_phase_plane_figure() -> None:
         mark_start=False,
         direction_arrows=False,
     )
+    fig.set_size_inches(5.0, 3.31)
+    ax.set_title("")
     ax.lines[0].set_color("#2878B5")
     ax.lines[0].set_linewidth(2.3)
     ax.lines[1].set_color("#E07A22")
     ax.lines[1].set_linewidth(2.3)
     ax.lines[1].set_linestyle("--")
     ax.scatter(*initial, color="black", s=38, zorder=4, label="Initial population")
-    ax.set_title("Playground 2: wolf versus elk population")
     ax.legend()
     fig.tight_layout()
     save(fig, "playground2_wolf_vs_elk")

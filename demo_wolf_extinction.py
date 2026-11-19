@@ -6,6 +6,9 @@ Saves:
   wolf_extinction_timeseries.png  — policy-driven crash vs W=0 from t=0
   wolf_extinction_comparison.png  — with wolves vs without (elk + vegetation)
   wolf_extinction_elk_boom.png    — final elk vs KF under W≡0
+
+The two figures used in VERYIMPORTANTPAPER are also written as PDFs to
+VERYIMPORTANTPAPER/figures at their final 5-inch publication width.
 """
 
 from __future__ import annotations
@@ -20,6 +23,7 @@ from ecosystem_ode import make_wolf_elk_model
 OUT = Path(__file__).resolve().parent
 T_SPAN = (0.0, 80.0)
 N = 1601
+PAPER_FIGURES = OUT / "VERYIMPORTANTPAPER" / "figures"
 
 # Policy-driven extinction run. Exposed at module level so other work
 # (e.g. wolf_reintroduction.ipynb) can start from where this run ends.
@@ -47,12 +51,12 @@ def main() -> None:
     sol_gone = no_wolves.solve(y0_gone, T_SPAN, n_points=N)
     sol_gone_matched = no_wolves_matched.solve((55.0, 0.0), T_SPAN, n_points=N)
 
-    fig, axes = plt.subplots(2, 1, figsize=(9, 7), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(5.0, 5.06), sharex=True)
     axes[0].plot(sol_crash.t, sol_crash.y[0], lw=2, label="Elk")
     axes[0].plot(sol_crash.t, sol_crash.y[1], lw=2, label="Wolves")
     axes[0].set(
         ylabel="Population",
-        title="Policy-driven extinction (high hW + pF): wolves crash, elk rebound",
+        title="Policy-driven wolf extinction",
     )
     axes[0].grid(alpha=0.25)
     axes[0].legend(loc="best")
@@ -66,20 +70,22 @@ def main() -> None:
     axes[1].set(
         xlabel="Time",
         ylabel="Population",
-        title="Wolves already extinct (W≡0): elk grow toward hunting-adjusted capacity",
+        title="Elk growth after wolf extinction",
     )
     axes[1].grid(alpha=0.25)
     axes[1].legend(loc="best")
     fig.tight_layout()
     path = OUT / "wolf_extinction_timeseries.png"
-    fig.savefig(path, dpi=150)
+    fig.savefig(path, dpi=300)
+    PAPER_FIGURES.mkdir(parents=True, exist_ok=True)
+    fig.savefig(PAPER_FIGURES / "wolf_extinction_timeseries.pdf", dpi=300)
     print(f"Saved {path}")
 
-    fig, axes = plt.subplots(2, 1, figsize=(9, 7), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(5.0, 5.06), sharex=True)
     axes[0].plot(sol_coexist.t, sol_coexist.y[0], lw=2, label="Elk (with wolves)")
     axes[0].plot(sol_gone_matched.t, sol_gone_matched.y[0], lw=2, ls="--", label="Elk (no wolves)")
     axes[0].plot(sol_coexist.t, sol_coexist.y[1], lw=2, label="Wolves")
-    axes[0].set(ylabel="Population", title="With wolves vs without (same KF, hE): populations")
+    axes[0].set(ylabel="Population", title="Populations under matched habitat and elk hunting")
     axes[0].grid(alpha=0.25)
     axes[0].legend(loc="best")
 
@@ -90,14 +96,15 @@ def main() -> None:
     axes[1].set(
         xlabel="Time",
         ylabel="Relative vegetation (1 − E/KF)",
-        title="Overgrazing risk rises when apex predation is removed",
+        title="Vegetation proxy",
     )
     axes[1].set_ylim(-0.05, 1.05)
     axes[1].grid(alpha=0.25)
     axes[1].legend(loc="best")
     fig.tight_layout()
     path = OUT / "wolf_extinction_comparison.png"
-    fig.savefig(path, dpi=150)
+    fig.savefig(path, dpi=300)
+    fig.savefig(PAPER_FIGURES / "wolf_extinction_comparison.pdf", dpi=300)
     print(f"Saved {path}")
 
     KFs = np.linspace(40.0, 120.0, 17)

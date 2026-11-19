@@ -12,7 +12,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{textcomp}
 \usepackage{newunicodechar}
-\graphicspath{{../}{../Norman/paper/figures/}} % figures live outside this folder
+\graphicspath{{figures/}}
 
  
 
@@ -138,8 +138,8 @@ nonhyperbolic and require separate analysis which is not the focus of this paper
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{simple_model_flow.png}
-    \caption{Phase-plane flow of the simple wolf-elk model. Streamlines show the direction of population change, and color indicates $\log(1+\text{speed})$. Parameters are $r_E=0.40$, $K=1200$, $\alpha_{FE}=10$, $a=0.001$, $\eta=0.25$, $d_W=0.08$, $F=6$, $H=4$, $c_{HE}=0.003$, and $c_{FW}=0.004$.}
+    \includegraphics[width=5in]{simple_model_flow.pdf}
+    \caption{Phase-plane flow of the wolf--elk model, with elk abundance $E$ on the horizontal axis and wolf abundance $W$ on the vertical axis. Arrows show the direction of change, and the color scale gives the logarithm of one plus the speed $\sqrt{(dE/dt)^2+(dW/dt)^2}$. The trajectories approach a positive-population equilibrium. Parameters are $r_E=0.40$, $K=1200$, $\alpha_{FE}=10$, $a=0.001$, $h=1$, $c=0.001$, $\eta=0.25$, $d_W=0.08$, $F=6$, $H=4$, $c_{HE}=0.003$, and $c_{FW}=0.004$.}
     \label{fig:fig1}
 \end{figure}
 
@@ -174,8 +174,8 @@ The linear function represents a baseline, the exponential a slow start that pic
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{frontier_introduction_schedules.png}
-    \caption{Linear, exponential, and arctangent schedules for introducing farmer and hunter pressure. Each curve shows the fraction of maximum pressure over time: introduction begins at $t=10$ and reaches full pressure at $t=45$. Dashed lines mark these times.}
+    \includegraphics[width=5in]{frontier_introduction_schedules.pdf}
+    \caption{Three schedules for gradually increasing farmer and hunter pressure. Each curve gives the fraction of maximum pressure applied at time $t$: the linear schedule increases steadily, the exponential schedule starts slowly and accelerates, and the arctangent schedule rises most quickly near the middle. Pressure is zero before $t=10$ and reaches its maximum at $t=45$; dashed lines mark those times.}
     \label{fig:fig2}
 \end{figure}
 
@@ -183,16 +183,15 @@ We hoped that we would see that adding this slow introduction would change the b
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{frontier_introduction_population_response.png}
-    \caption{Elk and wolf population responses to linear, exponential, and arctangent introductions of farmer and hunter pressure. As you can see each introduction method has slightly different curves, but settles on the same equilibrium. Each simulation starts at $(E,W)=(600,50)$; pressure rises from zero at $t=10$ to its maximum at $t=45$, with $F_{\max}=40$ and $H_{\max}=25$. This figure uses the same parameters as Figure~\ref{fig:fig2} except for $F_{\max}$ and $H_{\max}$.}
+    \includegraphics[width=5in]{frontier_introduction_population_response.pdf}
+    \caption{Elk (top) and wolf (bottom) populations under the linear, exponential, and arctangent pressure schedules shown in Figure~\ref{fig:fig2}. All runs start at $(E,W)=(600,50)$; farmer and hunter pressure rise from zero at $t=10$ to $F_{\max}=40$ and $H_{\max}=25$ at $t=45$. The trajectories differ during the transition but approach the same long-run state. The biological parameters match Figure~\ref{fig:fig1}; the frontier simulations use $c_{FW}=0.00009$.}
     \label{fig:fig3}
 \end{figure}
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{playground2_wolf_vs_elk.png}
-    \caption{Wolf--elk phase-plane trajectories comparing gradual pressure introduction with full farmer and hunter pressure from the start. It is clear that the non-introduction case converges to the equilibrium much faster than the gradual introduction case. 
-    Both simulations begin at $(E,W)=(650,110)$. In the gradual case, pressure follows a smoothstep ramp from $t=10$ to $t=11$; in the full-force case, $F=40$ and $H=25$. This figure uses the same parameters as Figure~\ref{fig:fig2} except for $F_{\max}$ and $H_{\max}$.}
+    \includegraphics[width=5in]{playground2_wolf_vs_elk.pdf}
+    \caption{Wolf--elk phase-plane trajectories comparing a gradual introduction with full farmer and hunter pressure from the start. Elk abundance is on the horizontal axis and wolf abundance on the vertical axis; the black dot marks the shared initial state $(E,W)=(650,110)$. The gradual run applies a smoothstep ramp from $t=10$ to $t=11$, while the full-force run applies $F=40$ and $H=25$ from $t=0$. Both runs approach the same equilibrium, but at different rates. The frontier simulations use $c_{FW}=0.00009$ and the biological parameters listed for Figure~\ref{fig:fig1}.}
     \label{fig:fig4}
 \end{figure}
 
@@ -214,8 +213,8 @@ Under the tracked policy alone, the defaults support coexistence. When the same 
 These comparisons indicate that an apparently adequate managed harvest rule can fail once removals include a component outside managerial control. Evaluating hunting policy in this system therefore requires accounting for both the formal control rule and additional untracked pressure on wolves.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{trapper_policies_comparison.png}
-    \caption{Elk and wolf counts are shown relative to their starting values under a hunting rule that raises effort when the lagged wolf census is above a target and lowers it when the census is below. The top panel uses only that tracked rule and both populations stay positive, while the middle and bottom panels add random untracked wolf removals and show one case where wolves persist and one where they go extinct.}
+    \includegraphics[width=5in]{trapper_policies_comparison.pdf}
+    \caption{Relative elk and wolf abundances over 400 time units from $(E_0,W_0)=(800,40)$; each curve is divided by its initial abundance, and the dashed line marks the wolf target $W_{\mathrm{target}}=25$ divided by $W_0$. At five-unit intervals, tracked effort is updated as $\operatorname{clip}(1+0.45(W_{\mathrm{lag}}-25),0,55)$ and held fixed between updates. The top panel uses this rule alone. The middle and bottom panels add stochastic untracked hunting with mean effort $18$ and lognormal scale $0.4$ (seeds 1 and 0, respectively); wolves persist in the first realization and fall below the model's quasi-extinction threshold in the second.}
     \label{fig:fig7}
 \end{figure}
 
@@ -225,16 +224,18 @@ Wolf Extinction Analysis:
 When wolves go extinct, the elk population quickly shoots up to the carrying capacity. However, the carrying capacity is susceptible to overgrazing, as shown in Figure~\ref{fig:fig8}.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{wolf_extinction_comparison.png}
-    \refstepcounter{figure}\label{fig:fig8}
+    \includegraphics[width=5in]{wolf_extinction_comparison.pdf}
+    \caption{Wolf presence and vegetation proxy over 80 time units under matched habitat and elk-hunting parameters ($K_F=100$, $h_E=0.01$). In the top panel, the run with wolves starts at $(E,W)=(55,18)$ and the no-wolf run at $(55,0)$; elk rise toward the carrying capacity when wolves are absent. The bottom panel shows the vegetation proxy $\max(0,1-E/K_F)$ for the same two runs, indicating much less remaining vegetation without wolves.}
+    \label{fig:fig8}
 \end{figure}
 
 The presence of wolves greatly decreases the elk population below carrying capacity, preventing overgrazing. We find that farmer-induced extinction of wolves similarly rapidly increases elk population to carrying capacity. Even when farmers slowly get rid of wolves, as shown in Figure~\ref{fig:fig9}, the elk still shoot up to a level that would likely produce overgrazing.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{wolf_extinction_timeseries.png}
-    \refstepcounter{figure}\label{fig:fig9}
+    \includegraphics[width=5in]{wolf_extinction_timeseries.pdf}
+    \caption{Elk and wolf populations over 80 time units during policy-driven wolf decline (top) and elk recovery after wolves are already absent (bottom). In the top panel, the run starts at $(E,W)=(45,12)$ with $K_F=110$, $h_E=0.04$, $h_W=0.35$, and $p_F=0.45$; wolves approach functional extinction as elk recover. In the bottom panel, $W=0$ throughout and elk approach the hunting-adjusted equilibrium $K_F(1-h_E/r)\approx102$, shown by the dashed line.}
+    \label{fig:fig9}
 \end{figure}
 
 \subsection{Wolf Reintroduction}
@@ -252,10 +253,10 @@ The impact that federal policy can have on the wolf elk population is best exemp
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{reintroduction_phi_0_vs_025_populations.png}
+    \includegraphics[width=5in]{reintroduction_phi_0_vs_025_populations.pdf}
     \caption{Wolf and elk populations through extinction and reintroduction
-under full protection (left, $\phi = 0$) and partial protection
-(right, $\phi = 0.25$). Phase 1 (shaded): heavy human-caused wolf
+under full protection (top, $\phi = 0$) and partial protection
+(bottom, $\phi = 0.25$). Phase 1 (shaded): heavy human-caused wolf
 mortality drives wolves functionally extinct, and elk grow to their
 wolf-free level of approximately $102$. Phase 2: approximately
 $30$ wolves are released in years $5$ and $6$, and protection begins.
@@ -275,9 +276,9 @@ We see that, with simple reintroduction and various numbers of wolves that we re
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\linewidth]{reintroduction_phi_0_vs_025_equilibria.png}
+    \includegraphics[width=5in]{reintroduction_phi_0_vs_025_equilibria.pdf}
     \caption{Phase planes of the wolf--elk model under full protection
-(left, $\phi = 0$) and partial protection (right, $\phi = 0.25$),
+(top, $\phi = 0$) and partial protection (bottom, $\phi = 0.25$),
 with no further releases. Streamlines indicate the direction of
 the flow. Colored curves represent trajectories from nine initial
 conditions (black dots), combining low, medium, and high elk

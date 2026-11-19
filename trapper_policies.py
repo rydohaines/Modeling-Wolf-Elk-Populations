@@ -158,10 +158,8 @@ ADAPTIVE_TRAPPER_DEFAULTS: dict[str, float] = {
 
 
 def _validate_nonnegative_capacity(parameters: Mapping[str, float]) -> None:
-    if parameters["K"] <= 0:
-        raise ValueError("K must be strictly positive")
-    if parameters["K"] - parameters["alpha_FE"] * parameters["F"] <= 0:
-        raise ValueError("Farmer pressure must leave a positive elk carrying capacity")
+    if parameters["KF"] <= 0 or parameters["K0"] <= 0:
+        raise ValueError("KF and K0 must be strictly positive")
     if any(v < 0 for v in parameters.values()):
         raise ValueError("Parameters must be nonnegative")
 
